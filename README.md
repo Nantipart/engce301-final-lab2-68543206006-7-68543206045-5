@@ -38,42 +38,12 @@ graph TD
 
 ---
 
-
 auth-service-production-0c97.up.railway.app
 task-service-production-3b98.up.railway.app
 user-service-production-97ac9.up.railway.app
 
-
-Internet
-    │
-    ▼
-┌──────────────────────────────────────────────────────────────────────────┐
-│   🌐 Railway Cloud Platform                                              │
-│                                                                          │
-│  ┌───────────────────┐  ┌──────────────────────┐  ┌───────────────────┐  │
-│  │  🔑 Auth Service  │  │  📋 Task Service      │  │  👤 User Service  │  │
-│  │  auth.up.rlwy.net │  │  task.up.rlwy.net    │  │  user.up.rlwy.net │  │
-│  │  PORT: 3001       │  │  PORT: 3002          │  │  PORT: 3003       │  │
-│  └────────┬──────────┘  └──────────┬───────────┘  └────────┬──────────┘  │
-│           │                        │                       │             │
-│           ▼                        ▼                       ▼             │
-│  ┌────────────────┐   ┌─────────────────────┐  ┌──────────────────────┐  │
-│  │  🗄️ auth-db    │   │  🗄️ task-db          │  │  🗄️ user-db          │  │
-│  │  PostgreSQL    │   │  PostgreSQL         │  │  PostgreSQL          │  │
-│  │  users table   │   │  tasks table        │  │  user_profiles table │  │
-│  │  logs table    │   │  logs table         │  │  logs table          │  │
-│  └────────────────┘   └─────────────────────┘  └──────────────────────┘  │
-│                                                                          │
-│  JWT_SECRET ใช้ร่วมกันทุก service (ผ่าน Railway Environment Variables)        │
-└──────────────────────────────────────────────────────────────────────────┘
-
-
-
-
-  Network: taskboard-net (Docker bridge — services คุยกันด้วยชื่อ container)
-```
-
----
+Screenshot: 
+https://front-end-production-d439.up.railway.app/
 
 ## Users
 
