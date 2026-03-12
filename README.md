@@ -127,47 +127,6 @@ docker compose down -v     # หยุด + ลบ database volume (reset ข้
 
 ---
 
-## 📁 โครงสร้างโปรเจกต์
-
-```
-engce301_final/
-├── auth-service/          # JWT Authentication Service (port 3001)
-│   ├── src/
-│   │   ├── routes/auth.js     # POST /login, GET /verify, GET /me
-│   │   ├── middleware/
-│   │   │   └── jwtUtils.js    # generateToken, verifyToken
-│   │   └── db/db.js           # PostgreSQL connection pool
-│   └── Dockerfile
-├── task-service/          # Task CRUD Service (port 3002)
-│   ├── src/
-│   │   ├── routes/task.js     # GET/POST/PUT/DELETE /tasks
-│   │   ├── middleware/
-│   │   │   └── authMiddleware.js  # JWT verification middleware
-│   │   └── jwtUtils.js        # verifyToken
-│   └── Dockerfile
-├── log-service/           # Logging Service (port 3003)
-│   ├── src/
-│   │   └── index.js           # GET /logs, POST /internal
-│   └── Dockerfile
-├── frontend/              # Static Web UI
-│   ├── index.html             # Task Board UI
-│   ├── logs.html              # Log Dashboard
-│   └── Dockerfile
-├── nginx/                 # API Gateway + TLS
-│   ├── nginx.conf
-│   ├── Dockerfile
-│   └── certs/
-│       ├── cert.pem
-│       └── key.pem
-├── db/
-│   └── init.sql           # Schema + Seed users
-├── scripts/
-│   └── gen-certs.sh       # สร้าง self-signed certificate
-├── docker-compose.yml
-├── .env.example
-└── README.md
-```
-
 ---
 
 | Test | รายการ (ทดสอบบน Cloud URL) | คะแนน |
