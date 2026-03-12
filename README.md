@@ -1,4 +1,4 @@
-# 🚨 ENGCE301 Task Board(Final Lab1)
+# 🚨 ENGCE301 Software Design and Development
 
 ## สมาชิกกลุ่ม
 
@@ -11,48 +11,31 @@
 
 ## สถาปัตยกรรมที่ต้องสร้าง Architecture Diagram
 
-```
-                        ┌─────────────────────────────────────────────────┐
-                        │               CLIENT (Browser)                   │
-                        │         https://localhost (port 443)             │
-                        └─────────────────────┬───────────────────────────┘
-                                              │ HTTPS (TLS 1.2/1.3)
-                                              │ Self-signed Certificate
-                                              ▼
-                        ┌─────────────────────────────────────────────────┐
-                        │              NGINX (API Gateway)                 │
-                        │         Port 80 → redirect → 443                │
-                        │         Port 443 (TLS termination)               │
-                        │                                                  │
-                        │  Rate Limit: /api/auth/login → 5 req/min        │
-                        │  Rate Limit: /api/*          → 30 req/min       │
-                        └──────┬──────────┬──────────┬────────────────────┘
-                               │          │          │
-                HTTP (internal)│          │          │
-                               ▼          ▼          ▼
-              ┌────────────────┐  ┌───────────────┐  ┌───────────────┐
-              │  auth-service  │  │ task-service  │  │  log-service  │
-              │   port 3001    │  │   port 3002   │  │   port 3003   │
-              │                │  │               │  │               │
-              │ POST /login    │  │ GET    /tasks │  │ GET  /logs    │
-              │ GET  /verify   │  │ POST   /tasks │  │ POST /internal│
-              │ GET  /me       │  │ PUT    /tasks │  │ GET  /stats   │
-              └───────┬────────┘  └───────┬───────┘  └───────┬───────┘
-                      │                   │                   │
-                      └───────────────────┴───────────────────┘
-                                          │
-                                          ▼
-                        ┌─────────────────────────────────────────────────┐
-                        │              PostgreSQL (port 5432)              │
-                        │                                                  │
-                        │  tables: users │ tasks │ logs                   │
-                        └─────────────────────────────────────────────────┘
+Internet
+    │
+    ▼
+┌──────────────────────────────────────────────────────────────────────────┐
+│   🌐 Railway Cloud Platform                                              │
+│                                                                          │
+│  ┌───────────────────┐  ┌──────────────────────┐  ┌───────────────────┐  │
+│  │  🔑 Auth Service  │  │  📋 Task Service      │  │  👤 User Service  │  │
+│  │  auth.up.rlwy.net │  │  task.up.rlwy.net    │  │  user.up.rlwy.net │  │
+│  │  PORT: 3001       │  │  PORT: 3002          │  │  PORT: 3003       │  │
+│  └────────┬──────────┘  └──────────┬───────────┘  └────────┬──────────┘  │
+│           │                        │                       │             │
+│           ▼                        ▼                       ▼             │
+│  ┌────────────────┐   ┌─────────────────────┐  ┌──────────────────────┐  │
+│  │  🗄️ auth-db    │   │  🗄️ task-db          │  │  🗄️ user-db          │  │
+│  │  PostgreSQL    │   │  PostgreSQL         │  │  PostgreSQL          │  │
+│  │  users table   │   │  tasks table        │  │  user_profiles table │  │
+│  │  logs table    │   │  logs table         │  │  logs table          │  │
+│  └────────────────┘   └─────────────────────┘  └──────────────────────┘  │
+│                                                                          │
+│  JWT_SECRET ใช้ร่วมกันทุก service (ผ่าน Railway Environment Variables)        │
+└──────────────────────────────────────────────────────────────────────────┘
 
-                        ┌─────────────────────────────────────────────────┐
-                        │            frontend (Static Files)               │
-                        │         nginx:alpine — port 80 (internal)        │
-                        │         index.html │ logs.html                   │
-                        └─────────────────────────────────────────────────┘
+
+
 
   Network: taskboard-net (Docker bridge — services คุยกันด้วยชื่อ container)
 ```
@@ -185,16 +168,17 @@ engce301_final/
 
 ---
 
-## Test Cases และคะแนน
-
-| Test | คำสั่ง | Expected |
-|------|--------|----------|
-| T3 Login สำเร็จ | `POST /api/auth/login` (alice/alice123) | 200 + JWT token |
-| T4 Login ผิด | `POST /api/auth/login` (wrong password) | 401 |
-| T5 Create Task | `POST /api/tasks/` (มี JWT) | 201 Created |
-| T6 Get Tasks | `GET /api/tasks/` (มี JWT) | 200 + list |
-| T7 Update Task | `PUT /api/tasks/:id` (มี JWT) | 200 Updated |
-| T8 Delete Task | `DELETE /api/tasks/:id` (มี JWT) | 200 Deleted |
-| T9 No JWT | `GET /api/tasks/` (ไม่มี JWT) | 401 Unauthorized |
-| T10 View Logs | `GET /api/logs/` (มี JWT) | 200 + log entries |
-| T11 Rate Limit | POST login ผิด > 5 ครั้ง/นาที | 429 Too Many Requests |
+| Test | รายการ (ทดสอบบน Cloud URL) | คะแนน |
+|---|---|---|
+| T1 | Railway Dashboard เห็น 3 services + 3 databases ทุกอัน status = Active | 10 |
+| T2 | POST `/register` บน Railway Auth URL → 201 + user object | 10 |
+| T3 | POST `/login` บน Railway Auth URL → JWT token | 10 |
+| T4 | POST `/tasks` บน Railway Task URL (มี JWT) → 201 Created | 10 |
+| T5 | GET `/tasks` บน Railway Task URL (มี JWT) → tasks list | 10 |
+| T6 | GET `/users/profile` บน Railway User URL (มี JWT) → profile | 10 |
+| T7 | PUT `/users/profile` บน Railway → อัปเดตสำเร็จ | 5 |
+| T8 | GET `/tasks` บน Cloud โดยไม่มี JWT → 401 | 10 |
+| T9 | Screenshot Railway env page แสดง JWT_SECRET เหมือนกันทุก service | 5 |
+| T10 | README อธิบาย Gateway Strategy + Architecture Cloud | 10 |
+| **รวม** | | **90** |
+| Bonus | Deploy Nginx Gateway บน Railway (Option B) ทำงานได้จริง | 10 |
