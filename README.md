@@ -9,7 +9,40 @@
 
 ---
 
-## สถาปัตยกรรมที่ต้องสร้าง Architecture Diagram
+## ☁️ สถาปัตยกรรมระบบ (Cloud Architecture)
+
+```mermaid
+graph TD
+    Client["🌐 Web Browser (Frontend)"]
+    
+    subgraph "Railway.app Production"
+        Auth["🔐 Auth Service<br/>(Railway)"]
+        Task["📝 Task Service<br/>(Railway)"]
+        User["👤 User Service<br/>(Railway)"]
+        
+        AuthDB[("💾 Auth DB<br/>(PostgreSQL)")]
+        TaskDB[("💾 Task DB<br/>(PostgreSQL)")]
+        UserDB[("💾 User DB<br/>(PostgreSQL)")]
+    end
+
+    Client -- "POST /api/auth/login" --> Auth
+    Client -- "GET/POST /api/tasks" --> Task
+    Client -- "GET /api/users/profile" --> User
+    
+    Auth --- AuthDB
+    Task --- TaskDB
+    User --- UserDB
+    
+    Task -. "JWT Verification" .-> Auth
+```
+
+---
+
+
+auth-service-production-0c97.up.railway.app
+task-service-production-3b98.up.railway.app
+user-service-production-97ac9.up.railway.app
+
 
 Internet
     │
